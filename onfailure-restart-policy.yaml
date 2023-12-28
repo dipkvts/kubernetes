@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod1
+  labels:
+    type: web
+spec:
+  restartPolicy: OnFailure
+  containers:
+  - name: my-busybox
+    image: busybox
+    command: ["sh", "-c", "sleeeep 10"]
