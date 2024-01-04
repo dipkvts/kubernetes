@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green-app
+  labels:
+    type: greenapp
+spec:
+  template:
+    metadata:
+      name: green-pod
+      labels:
+        type: greenapp
+    spec:
+      containers:
+        - name: green-container
+          image: nginx:stable-perl
+  replicas: 1
+  selector:
+    matchLabels:
+      type: greenapp

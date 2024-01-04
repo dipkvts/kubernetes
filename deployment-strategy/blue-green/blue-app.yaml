@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-app
+  labels:
+    type: blueapp
+spec:
+  template:
+    metadata:
+      name: blue-pod
+      labels:
+        type: blueapp
+    spec:
+      containers:
+        - name: blue-container
+          image: nginx
+  replicas: 1
+  selector:
+    matchLabels:
+      type: blueapp
