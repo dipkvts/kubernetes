@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deploy-maxunavail1
+  labels:
+    type: webapp
+spec:
+  template:
+    metadata:
+      name: my-deploy-maxunavail1-pod
+      labels:
+        type: webapp
+    spec:
+      containers:
+        - name: my-deploy-maxunavail1-container
+          image: nginx
+  replicas: 4
+  selector:
+    matchLabels:
+      type: webapp
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
