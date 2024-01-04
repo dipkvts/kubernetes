@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sleep-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: myjob
+          image: ubuntu
+          command: ["sh", "-c", "sleep 5"]
+      restartPolicy: Never
+  backoffLimit: 3
+  completions: 4
+  # activeDeadlineSeconds: 10
