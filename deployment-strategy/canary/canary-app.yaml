@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: new-deploy
+  labels:
+    type: webapp
+spec:
+  template:
+    metadata:
+      name: new-pod
+      labels:
+        type: webapp
+    spec:
+      containers:
+        - name: new-container
+          image: nginx:stable-perl
+  replicas: 1
+  selector:
+    matchLabels:
+      type: webapp
