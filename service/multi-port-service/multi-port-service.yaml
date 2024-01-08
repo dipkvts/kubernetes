@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multiport-deployment
+  labels:
+    type: app
+    app: test
+spec:
+  template:
+    metadata:
+      name: multiport-pod
+      labels:
+        type: app
+    spec:
+      containers:
+        - name: multiport-nginx-container
+          image: nginx
+        - name: multiport-tomcat-container
+          image: tomcat
+  replicas: 3
+  selector:
+    matchLabels:
+      type: app
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: multiport-service
+spec:
+  type: NodePort
+  selector:
+    type: app
+  ports:
+    - name: nginx-port
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    - name: tomcat-port
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
