@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hpa-deploy
+  labels:
+    type: webapp
+spec:
+  template:
+    metadata:
+      name: hpa-pod
+      labels:
+        type: webapp
+    spec:
+      containers:
+        - name: hpa-container
+          image: nginx
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+  replicas: 1
+  selector:
+    matchLabels:
+      type: webapp
