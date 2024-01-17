@@ -1,7 +1,7 @@
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 metadata:
- name: "my-eks-cluster"
+ name: "my-ekss"
  region: "ap-south-1"
  version: "1.23"
 nodeGroups:
@@ -9,5 +9,5 @@ nodeGroups:
    instanceType: t3.medium
    desiredCapacity: 3
    volumeSize: 50
-   ssh:s
+   ssh:
      publicKeyName: deepbeliever-common

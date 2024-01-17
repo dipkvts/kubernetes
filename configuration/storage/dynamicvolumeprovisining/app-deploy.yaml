@@ -1,0 +1,95 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   labels:
+#     app: database
+#   name: database
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: database
+#   template:
+#     metadata:
+#       labels:
+#         app: database
+#     spec:
+#       containers:
+#         - image: mongo
+#           name: mongotest
+#           env:
+#             - name: MONGO_INITDB_ROOT_USERNAME
+#               value: admin
+#             - name: MONGO_INITDB_ROOT_PASSWORD
+#               value: testtesttest
+#           volumeMounts:
+#             - mountPath: /data/db
+#               name: db-store
+#       volumes:
+#         - name: db-store
+#           persistentVolumeClaim:
+#             claimName: mongo-data-claim
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mongo-svc
+# spec:
+#   selector:
+#     app: database
+#   ports:
+#     - port: 27017
+#       protocol: TCP
+#       targetPort: 27017
+#   type: NodePort
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodbb
+spec:
+  serviceName: mongodbb
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongodbb
+  template:
+    metadata:
+      labels:
+        app: mongodbb
+    spec:
+      containers:
+        - name: mongodbb
+          image: mongo
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: admin
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: testtesttest
+          volumeMounts:
+            - name: mongodbb-data
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: mongodbb-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: my-storageclass
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodbb
+spec:
+  selector:
+    app: mongodbb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+  clusterIP: None
