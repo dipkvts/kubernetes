@@ -17,10 +17,13 @@ spec:
               image: mongo
               command: ["/bin/sh", "-c"]
               args: [
+                  # Doing backup on ebs
                   # 'mongodump --uri "mongodb://${MONGO_UNAME}:${MONGO_PASSWORD}@mongodb-svc.default.svc.cluster.local:27017/?replicaSet=rs0&readPreference=secondaryPreferred&authSource=admin&ssl=false" -o /usr/share/mongodump/$(date +"%d%m%Y-%H%M%S")',
+                  # Doing backup on host machine (this will create backup of below mongodb)
                   'mongodump --host=mongodb-svc.default.svc.cluster.local --port=27017 --username=admin --password=test123 --out=/usr/share/mongodump/$(date +"%d%m%Y-%H%M%S")',
                 ]
               volumeMounts:
+                # This is path at which pod (created by cronjob) keeps its backup. This folder will be synced  with hostPath or EBS or any extrnal path
                 - mountPath: "/usr/share/mongodump/"
                   name: mongodump
               env:
@@ -39,6 +42,7 @@ spec:
               # persistentVolumeClaim:
               #   claimName: mongodump
               hostPath:
+                # This directory must be available at host, else it will not backup
                 path: /data/unique/
                 type: Directory
           restartPolicy: Never

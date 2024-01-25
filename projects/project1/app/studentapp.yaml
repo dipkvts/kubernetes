@@ -53,6 +53,7 @@ spec:
             limits:
               cpu: 2
               memory: "2Gi"
+          # If u have inserted some data in ur db, then u can uncomment these probes
           #livenessProbe:
             #httpGet:
               #path: /getStudents
