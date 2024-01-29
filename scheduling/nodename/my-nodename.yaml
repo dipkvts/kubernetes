@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+spec:
+  containers:
+    - name: app
+      image: nginx
+  nodeName: ip-192-168-87-70.ap-south-1.compute.internal
