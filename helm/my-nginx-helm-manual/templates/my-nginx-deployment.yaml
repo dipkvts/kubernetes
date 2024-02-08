@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nginxdeploy.name }}
+  labels:
+    type: nginxapp
+spec:
+  template:
+    metadata:
+      name: nginx
+      labels:
+        type: nginxapp
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:{{ .Values.nginxdeploy.imagetag }}
+  replicas: {{ .Values.nginxdeploy.replicas }}
+  selector:
+    matchLabels:
+      type: nginxapp
