@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.appIngress.name }}
+  labels:
+    name: wordpresss-ingress
+spec:
+  ingressClassName: {{ .Values.appIngress.ingressType }}
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                # Below name is the service name 
+                name: {{ .Values.appIngress.svcName }}
+                port:
+                  number: {{ .Values.appIngress.svcPort }}
