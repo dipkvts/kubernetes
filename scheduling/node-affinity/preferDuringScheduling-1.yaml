@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  affinity:
+    nodeAffinity:
+      # If "a=b" labelled node not found, pod will deploy itself to other nodes, n once "a=b" labelled node becomes available it tries switching itself to that node 
+      preferDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: a
+                operator: In
+                values:
+                  - b
+  containers:
+    - name: nginx
+      image: nginx
+      imagePullPolicy: IfNotPresent
