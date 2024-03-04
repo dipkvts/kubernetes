@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user-sa
+  namespace: kubernetes-dashboard
+---
+# Mapping "cluster-admin" ClusterRole with "admin-user" ServiceAccount (defined above)
+# Note that: this yaml contains 3 "Kind:" segments (but main it is a ClusterRoleBinding yaml)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+  #This role is by default available to us "kubectl get clusterrole". This role contains all permissions read, write, delete n all which an admin user should have
+subjects:
+  - kind: ServiceAccount
+    name: admin-user-sa
+    # In below namespace ServiceAccount will get created
+    namespace: kubernetes-dashboard
+    
