@@ -1,0 +1,80 @@
+def call(String jfrogUname, String jfrogPassword, String jfrogTargetPath, String jfrogEndpoint) {
+    sh """
+        echo "-------- Pushing Artifacts To JFrog --------"
+        curl -X PUT -u ${jfrogUname}:${jfrogPassword} -T ${jfrogTargetPath} ${jfrogEndpoint}
+        echo "-------- Pushing Artifacts Complete --------"
+    """
+}
+
+def call() {
+    sh """
+        echo "-------- Cleaning Docker Images --------"
+        docker image prune -a -f 
+        echo "-------- Cleaning Docker Images Complete --------"
+    """
+}
+
+def call(String appName, String appVersion, String commonVersion) {
+    sh """
+        echo "-------- Building Docker Image --------"
+        docker build -t ${appName}:${appVersion} .
+        docker build -t ${appName}:${commonVersion} .
+        echo "-------- Building Docker Image Complete --------"
+    """
+}
+
+def call(String dockerHubUname, String dockerHubPassword, String appName, String appVersion) {
+    sh """
+        echo "-------- Pushing Docker Image To DockerHub --------"
+        echo "-------- Logging To DockerHub --------"
+        docker login -u ${dockerHubUname} --password ${dockerHubPassword}
+        echo "-------- LoggedIn To DockerHub --------"
+
+        docker tag ${appName}:latest ${dockerHubUname}/${appName}:latest
+        docker push ${dockerHubUname}/${appName}:latest
+
+        docker tag ${appName}:"${appVersion}" ${dockerHubUname}/${appName}:"${appVersion}"
+        docker push ${dockerHubUname}/${appName}:"${appVersion}"
+        docker image prune --all
+        echo "-------- Docker Image Pushed --------"
+    """
+}
+
+def call(String appName, String appVersion, String hubUser) {
+    sh """
+      echo "-------- Docker Image Scan --------"
+      trivy image ${appName}:${appVersion} > scan.txt
+      cat scan.txt
+      echo "-------- Docker Image Scan Complete --------"
+    """
+}
+
+def call(Map stageParams) {
+    checkout([
+            $class: 'GitSCM',
+            branches: [[name:  stageParams.branch ]],
+            userRemoteConfigs: [[ url: stageParams.url ]]
+    ])
+}
+
+def call() {
+    sh '''
+      echo "-------- Creating Jar --------"
+      mvn clean package
+      echo "-------- Jar Creation Complete --------"
+    '''
+}
+
+def call() {
+    sh '''
+        echo "-------- Executing Testcases --------"
+        mvn test
+        echo "-------- Testcase Execution Complete --------"
+    '''
+}
+
+def call(credentialsId){
+    withSonarQubeEnv(credentialsId: credentialsId) {
+        sh 'mvn sonar:sonar'
+    }
+}
